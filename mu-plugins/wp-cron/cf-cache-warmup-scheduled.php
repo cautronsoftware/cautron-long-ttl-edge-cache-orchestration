@@ -1,3 +1,4 @@
+<?php
 /**
 * Cache Warmup — Scheduled (every night at 03:07 TR)
 * Works INDEPENDENTLY from the manual warmup code. Does not conflict.
