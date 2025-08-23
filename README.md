@@ -101,6 +101,7 @@ Cache Reserve Integration:
 Cloudflare Worker
 	•	CF_API_TOKEN: Token with Zone Purge and Zone Read permissions.
 	•	ZONE_ID: Cloudflare Zone ID.
+    •	Cron Trigger 0 3 * * *
 
 WordPress Cron
 	•	SIL_SCH_BATCH = 50 (max 80)
