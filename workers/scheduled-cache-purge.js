@@ -8,6 +8,7 @@
  * Cloudflare Zone once per day at 03:00 AM Greenwich time (03:00 GMT). Please modify
  * the time for your the highest traffic zone.
  *
+ *
  * ⚠️ Ensure you set the following secrets in your environment:
  *   - CF_API_TOKEN: A token with Zone → Cache Purge permissions
  *   - ZONE_ID: Your Cloudflare Zone ID
