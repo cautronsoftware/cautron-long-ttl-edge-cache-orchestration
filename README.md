@@ -182,7 +182,8 @@ Mark sensitive variables as Secret.
 	•	Sustainable performance
 	•	Minimal origin server usage
 	•	Long-Term Edge Caching aligned with environmental goals
- 
+
+  ⸻
 
 📝 License
 
