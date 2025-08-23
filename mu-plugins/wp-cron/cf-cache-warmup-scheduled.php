@@ -1,7 +1,6 @@
 <?php
 /**
-* Cache Warmup — Scheduled (every night at 03:07 TR)
-* Works INDEPENDENTLY from the manual warmup code. Does not conflict.
+* Cache Warmup — Scheduled (every night at 03:07 GMT)
 * - Batch: 50 URLs
 * - Concurrency: 5
 * - Source: All subsitemaps in sitemap_index.xml
