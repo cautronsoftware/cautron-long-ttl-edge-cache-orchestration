@@ -99,8 +99,8 @@ Cache Reserve Integration:
 🔧 Configuration Parameters
 
 Cloudflare Worker
-	•	CF_API_TOKEN: Token with Zone Purge and Zone Read permissions.
-	•	ZONE_ID: Cloudflare Zone ID.
+	•	CF_API_TOKEN: Token with Zone Purge and Zone Read permissions.(Secret)
+	•	ZONE_ID: Cloudflare Zone ID.(Secret)
     •	Cron Trigger 0 3 * * *
 
 WordPress Cron
@@ -143,12 +143,12 @@ WordPress Cron
 	•	Add worker in Cloudflare dashboard.
 	•	Set env vars: CF_API_TOKEN, ZONE_ID.
 	•	Schedule: 0 3 * * * UTC.
-	•	Script: ctrn-scheduled-purge-everything.js
+	•	Script: scheduled-cache-purge.js
 
 ⸻
 
 3. WordPress Cron
-	•	Place script under mu-plugins/: ctrn-cache-warmup-scheduled.php
+	•	Place script under mu-plugins/: cf-cache-warmup-scheduled.php
 	•	Cron triggers at 03:07 (local server time).
 	•	Sitemap parsing → recursive URL collection.
 	•	Processes 50 URLs per batch, concurrency = 5.
