@@ -148,7 +148,7 @@ WordPress Cron
 ⸻
 
 3. WordPress Cron
-	•	Place script under mu-plugins/: cf-cache-warmup-scheduled.php
+	•	Place PHP snippet under mu-plugins/: cf-cache-warmup-scheduled.php
 	•	Cron triggers at 03:07 (local server time).
 	•	Sitemap parsing → recursive URL collection.
 	•	Processes 50 URLs per batch, concurrency = 5.
