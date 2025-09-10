@@ -2,7 +2,7 @@
 In today’s digital landscape, performance, reliability, and sustainability are paramount for businesses competing on a global scale. Traditional caching strategies frequently rely on uncontrolled purges or visitor-triggered refresh cycles, often leading to excessive origin load, inconsistent user experiences, and increased energy consumption across infrastructure. To address these challenges, Cautron Long TTL Edge Cache Orchestration has been designed as a professional, automated, and eco-conscious cache management framework optimized for Edge computing environments.
 
 # Overview
-This orchestration system combines Cloudflare Workers with WordPress scheduled tasks, ensuring cache updates are carried out predictably and efficiently. A daily purge everything operation at the Edge (via Cloudflare Worker) is followed by a controlled warmup routine executed through WordPress cron jobs. This guarantees up-to-date content is consistently served to all users, while minimizing stress on the origin server. HTML documents and new data are refreshed through purge-and-warm processes. Static assets (CSS, JS, images) leverage Cloudflare’s Cache Reserve, ensuring non-modified resources remain cached and are efficiently restored without repetitive origin requests.
+This orchestration system combines Cloudflare Workers with WordPress scheduled tasks, ensuring cache updates are carried out predictably and efficiently. A weekly purge everything operation at the Edge (via Cloudflare Worker) is followed by a controlled warmup routine executed through WordPress cron jobs. This guarantees up-to-date content is consistently served to all users, while minimizing stress on the origin server, especially for sites with frequently updated content. HTML documents and new data are refreshed through purge-and-warm processes. Static assets (CSS, JS, images) leverage Cloudflare’s Cache Reserve, ensuring non-modified resources remain cached and are efficiently restored without repetitive origin requests.
 
 # Sustainability Benefits
 This system significantly reduces energy usage by eliminating unnecessary PHP and database invocations for each visitor. Instead, the warmup simulates organic human traffic in structured batches, preloading critical cache entries with controlled concurrency.
@@ -23,10 +23,10 @@ Modern websites often face a trade-off between speed and sustainability:
 	•	Static assets rarely change, yet are constantly re-fetched from the origin.
 
 Cautron’s two-step orchestration solves this:
-	1.	Cloudflare Worker (03:00 UTC)
+	1.	Cloudflare Worker Weekly, Sunday (03:00 UTC)
 → Executes a full purge at the Edge.
 → Thanks to Cache Reserve, static assets are retained on disk.
-	2.	WordPress Cron (03:07 TR UTC)
+	2.	WordPress Weekly Cron (03:07 UTC)
 → Sequentially re-fetches all sitemap URLs, simulating natural traffic.
 → Static assets are restored from Cache Reserve.
 → Only updated HTML is re-downloaded from the origin.
@@ -45,7 +45,7 @@ Note: The time examples are based on Greenwich longitude. You can base your webs
 	•	Browser TTL:
 	•	HTML: Respect origin
 	•	JS/CSS/IMG: 1 year
-	•	Daily renewal ensures freshness despite long TTL.
+	•	Weekly renewal ensures freshness despite long TTL, while Long TTL ensures consistent performance.
 	•	Cache Reserve: Enabled ✅
 	•	Static files are preserved and rehydrated from reserve.
 	•	Tiered Cache ensures updated files are sync’d efficiently while unchanged files are reused, boosting sustainability.
@@ -53,8 +53,8 @@ Note: The time examples are based on Greenwich longitude. You can base your webs
 ⸻
 
  ⚠️ Legal Notice
-	•	Do not trigger cache purge more than once per day.
-	•	Avoid manual re-triggering of the cron job, just once in a day.
+	•	Avoid frequent purges; recommended frequency is weekly. Do not re-trigger more than once per week.
+	•	Avoid manually re-triggering the cron job; it should only run once per week.
 	•	Do not exceed recommended batch/concurrency values.
 	•	Excessive or misconfigured purge actions may violate Cloudflare or host terms of service, resulting in penalties or bans.
 	•	This is an open-source optimization example shared by Cautron. You accept full responsibility for your usage and acknowledge all provided warnings.
@@ -64,7 +64,7 @@ Note: The time examples are based on Greenwich longitude. You can base your webs
 ⸻
 
  ✨ Key Features
-	•	Full Purge via Worker
+	•	Full Weekly Purge via Worker
 	•	Edge cache (RAM) fully cleared.
 	•	Static files preserved via Cache Reserve.
 	•	Warmup via WordPress Cron
@@ -88,8 +88,8 @@ Cache Reserve Integration:
 ⸻
 
 🔄 Intelligent Purge + Warmup Flow
-	•	03:00 Worker (UTC) → Triggers full purge_everything (clears Edge RAM, Cache Reserve intact).
-	•	03:07 WordPress Cron → Begins warmup.
+	•	Weekly, Sunday at 03:00 Worker (UTC) → Triggers full purge_everything (clears Edge RAM, Cache Reserve intact).
+	•	Weekly, Sunday at 03:07 WordPress Cron → Begins warmup.
 	•	Static assets restored from reserve.
 	•	Updated HTML reloaded from origin.
 	•	Edge cache refilled, globally synced.
@@ -101,13 +101,13 @@ Cache Reserve Integration:
 Cloudflare Worker
 	•	CF_API_TOKEN: Token with Zone Purge and Zone Read permissions.(Secret)
 	•	ZONE_ID: Cloudflare Zone ID.(Secret)
-    •	Cron Trigger 0 3 * * *
+    •	Weekly Cron Trigger 0 3 * * 0
 
 WordPress Cron
-	•	SIL_SCH_BATCH = 50 (max 80)
-	•	SIL_SCH_CONCURRENCY = 5 (max 8)
-	•	SIL_SCH_MAX_RETRY = 3
-	•	SIL_SCH_TIMEOUT = 20 (max 30)
+	•	CTR_SCH_BATCH = 50 (max 80)
+	•	CTR_SCH_CONCURRENCY = 5 (max 8)
+	•	CTR_SCH_MAX_RETRY = 3
+	•	CTR_SCH_TIMEOUT = 20 (max 30)
  
  ⸻
 
@@ -142,7 +142,7 @@ WordPress Cron
 2. Cloudflare Worker
 	•	Add worker in Cloudflare dashboard.
 	•	Set env vars: CF_API_TOKEN, ZONE_ID.
-	•	Schedule: 0 3 * * * UTC.
+	•	Schedule: 0 3 * * 0 UTC.
 	•	Script: scheduled-cache-purge.js
 
 ⸻
@@ -189,7 +189,3 @@ Mark sensitive variables as Secret.
 📝 License
 
 MIT License — Developed by the Cautron ecosystem.
-
-
-
-
