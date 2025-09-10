@@ -1,12 +1,12 @@
 /**
  * scheduled-cache-purge.js
  *
- * 📅 Scheduled Cache Purge (Once a Day)
+ * 📅 Scheduled Cache Purge (Once a Week)
  * 🛠️ Developed by Cautron IT Services
  *
  * This Cloudflare Worker performs a full "purge_everything" on the specified
- * Cloudflare Zone once per day at 03:00 AM Greenwich time (03:00 GMT). Please modify
- * the time for your the highest traffic zone.
+ * Cloudflare Zone once per week at every Sunday 03:00 AM Greenwich time (03:00 GMT). Please modify
+ * the time for your the highest traffic zone's lowest traffic window.
  *
  *
  * ⚠️ Ensure you set the following secrets in your environment:
@@ -18,7 +18,7 @@
 
 export default {
   async scheduled(event, env, ctx) {
-    if (event.cron !== "0 3 * * *") return; // 03:00 (3AM) (UTC)
+    if (event.cron !== "0 3 * * 0") return; // Sunday 03:00 (UTC)
 
     const startedAt = Date.now();
     console.log(JSON.stringify({
