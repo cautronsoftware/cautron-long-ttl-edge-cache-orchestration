@@ -25,9 +25,6 @@ add_filter('cron_schedules', function ($schedules) {
 
 /* ==== 1) Schedule a weekly cron for Sunday 03:07 (Site Timezone) ==== */
 add_action('init', function () {
-    // Clean up any old daily jobs (avoid double triggers)
-    wp_clear_scheduled_hook('ctrn_warmup_scheduled');
-
     if (wp_next_scheduled('ctrn_warmup_scheduled')) return;
 
     // Site timezone
