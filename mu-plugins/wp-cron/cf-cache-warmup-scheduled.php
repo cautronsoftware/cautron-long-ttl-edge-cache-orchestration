@@ -1,6 +1,6 @@
 <?php
 /**
-* Cache Warmup — Scheduled (every night at 03:07 GMT)
+* Cache Warmup — Scheduled (Weekly, Sunday 03:07 — Site Timezone)
 * - Batch: 50 URLs
 * - Concurrency: 5
 * - Source: All subsitemaps in sitemap_index.xml
@@ -14,29 +14,44 @@ if (!defined('CTR_SCH_TKEY'))         define('CTR_SCH_TKEY',         'ctrn_warmu
 if (!defined('CTR_SCH_RKEY'))         define('CTR_SCH_RKEY',         'ctrn_warmup_result_scheduled');
 if (!defined('CTR_SCH_MAX_RETRY'))    define('CTR_SCH_MAX_RETRY',    3);
 
-/* ==== 1) Schedule a daily cron for 03:07 (Site Timezone) ==== */
+/* ==== add: Weekly schedule ==== */
+add_filter('cron_schedules', function ($schedules) {
+    $schedules['weekly_sun_0307'] = [
+        'interval' => 7 * DAY_IN_SECONDS,
+        'display'  => __('Weekly (Sunday 03:07)', 'ctrn'),
+    ];
+    return $schedules;
+});
+
+/* ==== 1) Schedule a weekly cron for Sunday 03:07 (Site Timezone) ==== */
 add_action('init', function () {
+    // Eski günlük job varsa temizle (geçişte çifte tetik olmasın)
+    wp_clear_scheduled_hook('ctrn_warmup_scheduled');
+
     if (wp_next_scheduled('ctrn_warmup_scheduled')) return;
 
-    // Get current time in site’s configured timezone
-    $tz     = wp_timezone(); // WP 5.3+
-    $now    = new DateTime('now', $tz);
-    $target = new DateTime('today 03:07:00', $tz);
+    // Site timezone
+    $tz  = wp_timezone(); // WP 5.3+
+    $now = new DateTime('now', $tz);
 
-    // If now is past today's 03:07, schedule for tomorrow
+    // Sunday of the current week 03:07 AM
+    $target = new DateTime('sunday 03:07:00', $tz);
+
+    // If scheduled time has passed → next Sunday
     if ($now >= $target) {
-        $target->modify('+1 day');
+        $target->modify('next sunday');
     }
-    // Convert to UTC timestamp
+
+    // UTC timestamp
     $dt_utc = clone $target;
     $dt_utc->setTimezone(new DateTimeZone('UTC'));
     $timestamp = $dt_utc->getTimestamp();
 
-    // Schedule daily cron job
-    wp_schedule_event($timestamp, 'daily', 'ctrn_warmup_scheduled');
+    // Weekly Cronjob (custom schedule)
+    wp_schedule_event($timestamp, 'weekly_sun_0307', 'ctrn_warmup_scheduled');
 });
 
-/* ==== 2) Daily cron handler ==== */
+/* ==== 2) Weekly cron handler ==== */
 add_action('ctrn_warmup_scheduled', function () {
     $queue = get_transient(CTR_SCH_TKEY);
 
